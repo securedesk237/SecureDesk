@@ -23,9 +23,7 @@ SecureDesk/
 ├── server/        # Relay server (Go)
 ├── portal/        # Web portal for licensed users
 ├── api/           # REST API backend
-├── licensing/     # License generation and validation
-├── shared/        # Shared protocol definitions
-└── website/       # Public website
+└── shared/        # Shared protocol definitions
 ```
 
 ## Quick Start
@@ -70,40 +68,6 @@ go build -o securedesk-relay .
 - Relay servers cannot decrypt session traffic
 - No logging of IP addresses or device identifiers on relays
 - No persistent storage of session data
-- Optional self-hosted relay for maximum privacy
-
-## Self-Hosting
-
-SecureDesk supports self-hosted deployments for organizations requiring complete control over their infrastructure.
-
-### Requirements
-- Linux server (Ubuntu 22.04 recommended)
-- Valid TLS certificate (Let's Encrypt works great)
-- Open port 8443 for relay traffic
-
-### Deployment
-
-See [INSTALL_VPS.md](INSTALL_VPS.md) for detailed self-hosting instructions.
-
-## License Tiers
-
-| Feature | Free | Basic | Pro |
-|---------|------|-------|-----|
-| Devices | 3 | 20 | 100 |
-| Remote Desktop | Yes | Yes | Yes |
-| File Transfer | Yes | Yes | Yes |
-| Two-Factor Auth | - | Yes | Yes |
-| Address Book | - | Yes | Yes |
-| Audit Logging | - | Yes | Yes |
-| Self-Hosted Relay | - | - | Yes |
-| API Access | - | - | Yes |
-
-## Documentation
-
-- [Architecture](ARCHITECTURE.md) - Technical architecture details
-- [Security Report](SECURITY_REPORT.md) - Security analysis and measures
-- [Whitepaper](whitepaper.md) - Design philosophy and protocol details
-- [Installation Guide](INSTALL_VPS.md) - VPS deployment instructions
 
 ## Protocol
 
@@ -115,9 +79,11 @@ The SecureDesk protocol uses a simple frame-based format:
 
 All payloads are encrypted end-to-end before transmission. The relay server only sees encrypted frames and forwards them without inspection.
 
-## Contributing
+## Documentation
 
-Contributions are welcome! Please read our contributing guidelines before submitting pull requests.
+- [Architecture](ARCHITECTURE.md) - Technical architecture details
+- [Security Report](SECURITY_REPORT.md) - Security analysis and measures
+- [Whitepaper](whitepaper.md) - Design philosophy and protocol details
 
 ## License
 
