@@ -1,0 +1,106 @@
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  background: var(--color-bg-primary);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0 12px;
+  user-select: none;
+  -webkit-app-region: drag;
+}
+
+.titlebar-left {
+  display: flex;
+  align-items: center;
+}
+
+.titlebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px;
+}
+
+.brand-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-accent);
+}
+
+.brand-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.3px;
+}
+
+.titlebar-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  -webkit-app-region: drag;
+}
+
+.session-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  -webkit-app-region: no-drag;
+}
+
+.session-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--color-success);
+}
+
+.session-badge span {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.encryption-tag {
+  font-size: 10px !important;
+  font-weight: 700;
+  color: var(--color-success) !important;
+  background: var(--color-success-subtle);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.5px;
+}
+
+.titlebar-right {
+  display: flex;
+  -webkit-app-region: no-drag;
+}
+
+.titlebar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--color-text-secondary);
+  transition: all 0.15s ease;
+  border-radius: 0;
+}
+
+.titlebar-btn:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.titlebar-btn.close:hover {
+  background: var(--color-error);
+  color: white;
+}
+
+.titlebar-btn svg {
+  width: 15px;
+  height: 15px;
+}

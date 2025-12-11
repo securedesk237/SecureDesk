@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=SecureDesk
+Comment=Privacy-preserving remote desktop with end-to-end encryption
+Exec=securedesk
+Icon=securedesk
+Terminal=false
+Type=Application
+Categories=Network;RemoteAccess;Utility;
+Keywords=remote;desktop;vnc;rdp;screen;sharing;
+StartupWMClass=SecureDesk
+MimeType=x-scheme-handler/securedesk;

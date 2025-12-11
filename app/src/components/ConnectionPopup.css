@@ -1,0 +1,212 @@
+.connection-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 100px;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.connection-popup {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 1px solid rgba(0, 212, 170, 0.3);
+  border-radius: 16px;
+  padding: 24px 32px;
+  min-width: 320px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(0, 212, 170, 0.1);
+  position: relative;
+  text-align: center;
+}
+
+.popup-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  background: linear-gradient(135deg, rgba(0, 212, 170, 0.2), rgba(0, 212, 170, 0.05));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse-icon 2s ease-in-out infinite;
+}
+
+.popup-icon svg {
+  width: 28px;
+  height: 28px;
+  color: #00d4aa;
+}
+
+@keyframes pulse-icon {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(0, 212, 170, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 15px rgba(0, 212, 170, 0);
+  }
+}
+
+.popup-content h3 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.popup-id {
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 28px;
+  font-weight: 700;
+  color: #00d4aa;
+  margin: 8px 0;
+  letter-spacing: 2px;
+  text-shadow: 0 0 20px rgba(0, 212, 170, 0.3);
+}
+
+.popup-subtitle {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.popup-warning {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: 8px;
+}
+
+.popup-warning svg {
+  width: 18px;
+  height: 18px;
+  color: #ffc107;
+  flex-shrink: 0;
+}
+
+.popup-warning span {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Trust device checkbox */
+.trust-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 10px 14px;
+  background: rgba(0, 212, 170, 0.08);
+  border: 1px solid rgba(0, 212, 170, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.trust-checkbox:hover {
+  background: rgba(0, 212, 170, 0.12);
+  border-color: rgba(0, 212, 170, 0.3);
+}
+
+.trust-checkbox input[type="checkbox"] {
+  display: none;
+}
+
+.trust-checkbox .checkmark {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(0, 212, 170, 0.5);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.trust-checkbox input[type="checkbox"]:checked + .checkmark {
+  background: #00d4aa;
+  border-color: #00d4aa;
+}
+
+.trust-checkbox input[type="checkbox"]:checked + .checkmark::after {
+  content: '✓';
+  color: #000;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.trust-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.popup-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.popup-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.popup-btn:active {
+  transform: scale(0.98);
+}
+
+.popup-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.popup-btn.decline {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.popup-btn.decline:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.popup-btn.accept {
+  background: linear-gradient(135deg, #00d4aa, #00b894);
+  color: #000;
+  border: none;
+}
+
+.popup-btn.accept:hover {
+  background: linear-gradient(135deg, #00e5b8, #00c9a0);
+  box-shadow: 0 4px 20px rgba(0, 212, 170, 0.4);
+}

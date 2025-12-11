@@ -1,0 +1,286 @@
+.session-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+}
+
+/* Toolbar */
+.session-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: var(--color-bg-tertiary);
+  border-bottom: 1px solid var(--color-border);
+  gap: 16px;
+}
+
+.toolbar-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toolbar-section.center {
+  flex: 1;
+  justify-content: center;
+}
+
+.session-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.meta-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.meta-duration {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  gap: 2px;
+}
+
+.toolbar-sep {
+  width: 1px;
+  height: 28px;
+  background: var(--color-border);
+}
+
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
+}
+
+.toolbar-btn.icon-only {
+  padding: 8px;
+}
+
+.toolbar-btn:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.toolbar-btn.active {
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+}
+
+.toolbar-btn.privacy.warning {
+  background: var(--color-warning-subtle);
+  color: var(--color-warning);
+}
+
+.toolbar-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.zoom-group {
+  gap: 4px;
+}
+
+.zoom-value {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  min-width: 36px;
+  text-align: center;
+}
+
+.disconnect-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  background: var(--color-error);
+  border-radius: var(--radius-md);
+  transition: all 0.15s ease;
+}
+
+.disconnect-btn:hover {
+  background: #dc2626;
+}
+
+.disconnect-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Canvas */
+.session-canvas {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  background: #0a0a0a;
+}
+
+.canvas-content {
+  transform-origin: center center;
+  transition: transform 0.15s ease;
+}
+
+.canvas-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 1280px;
+  height: 720px;
+  background: var(--color-bg-secondary);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-xl);
+}
+
+.placeholder-icon {
+  width: 56px;
+  height: 56px;
+  color: var(--color-border-light);
+}
+
+.placeholder-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.placeholder-text {
+  font-size: 13px;
+  color: var(--color-text-disabled);
+}
+
+/* Privacy Indicator - Small badge shown on client when privacy mode is active on host */
+.privacy-indicator {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.95), rgba(217, 119, 6, 0.95));
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+  z-index: 20;
+  font-size: 13px;
+  font-weight: 600;
+  color: #000;
+}
+
+.privacy-indicator-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Status Bar */
+.session-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: var(--color-bg-tertiary);
+  border-top: 1px solid var(--color-border);
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.status-left,
+.status-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+}
+
+.status-dot.connected {
+  background: var(--color-success);
+  box-shadow: 0 0 8px var(--color-success);
+}
+
+.status-lock {
+  width: 12px;
+  height: 12px;
+  color: var(--color-success);
+}
+
+/* Connection Badge */
+.connection-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 10px;
+}
+
+.connection-badge.relay {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.connection-badge.p2p {
+  background: rgba(234, 179, 8, 0.2);
+  color: #eab308;
+}
+
+/* Fullscreen */
+.session-view:fullscreen .session-toolbar,
+.session-view:fullscreen .session-status {
+  position: absolute;
+  left: 0;
+  right: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 100;
+}
+
+.session-view:fullscreen .session-toolbar {
+  top: 0;
+}
+
+.session-view:fullscreen .session-status {
+  bottom: 0;
+}
+
+.session-view:fullscreen .session-toolbar:hover,
+.session-view:fullscreen .session-status:hover {
+  opacity: 1;
+}

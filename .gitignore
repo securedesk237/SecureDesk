@@ -1,0 +1,85 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+dist/
+build/
+target/
+*.exe
+*.dll
+*.so
+*.dylib
+bin/
+*-linux
+*-darwin
+*-windows
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment and secrets
+.env
+.env.*
+*.key
+*.crt
+*.pem
+*.p12
+
+# Keys and credentials
+keys/
+*-keys.json
+credentials/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+nul
+
+# Logs
+*.log
+logs/
+
+# Generated files
+docker-compose.generated.yml
+
+# Private folders
+dashboard/
+licensing/
+deployment/
+website/
+sshkeys/
+
+# Downloads (binaries)
+downloads/
+
+# Config files with sensitive data
+nginx*.conf
+redis.conf
+*.conf
+
+# Tauri build cache
+app/src-tauri/target/
+app/src-tauri/WixTools/
+app/src-tauri/icons/*.ico
+app/src-tauri/icons/*.png
+
+# Rust
+Cargo.lock
+**/*.rs.bk
+
+# TypeScript
+*.tsbuildinfo
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/
+*.tmp

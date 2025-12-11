@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Screen Recording permission request -->
+    <key>NSScreenCaptureUsageDescription</key>
+    <string>SecureDesk needs screen recording access to share your screen with remote devices.</string>
+
+    <!-- Accessibility permission request (for input injection) -->
+    <key>NSAccessibilityUsageDescription</key>
+    <string>SecureDesk needs accessibility access to allow remote control of your computer.</string>
+
+    <!-- Camera access (optional, for future video chat) -->
+    <key>NSCameraUsageDescription</key>
+    <string>SecureDesk may use your camera for video calls.</string>
+
+    <!-- Microphone access (optional, for future audio) -->
+    <key>NSMicrophoneUsageDescription</key>
+    <string>SecureDesk may use your microphone for audio transmission.</string>
+
+    <!-- Network usage -->
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>SecureDesk uses the local network to discover and connect to devices.</string>
+
+    <!-- App category -->
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.utilities</string>
+
+    <!-- High resolution capable -->
+    <key>NSHighResolutionCapable</key>
+    <true/>
+
+    <!-- Supports Retina -->
+    <key>NSSupportsAutomaticGraphicsSwitching</key>
+    <true/>
+</dict>
+</plist>
