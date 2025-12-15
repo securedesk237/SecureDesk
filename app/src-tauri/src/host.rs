@@ -3,6 +3,7 @@
 #![allow(dead_code)]
 
 use anyhow::Result;
+use tauri::Emitter;
 use std::sync::Arc;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
@@ -171,6 +172,10 @@ impl HostSession {
                 println!("[HOST] Video request - sending frame");
                 self.send_video_frame().await?;
             }
+            Channel::Clipboard => {
+                println!("[HOST] Handling clipboard");
+                self.handle_clipboard_with_events(&frame, app_handle).await?;
+            }
             _ => {
                 println!("[HOST] Unknown channel");
             }
@@ -231,8 +236,6 @@ impl HostSession {
     }
 
     async fn handle_control_with_events<R: tauri::Runtime>(&mut self, frame: &Frame, app_handle: Option<&tauri::AppHandle<R>>) -> Result<()> {
-        use tauri::Manager;
-
         if frame.payload.is_empty() {
             println!("[HOST] Control frame has empty payload");
             return Ok(());
@@ -285,7 +288,7 @@ impl HostSession {
 
                 // Emit event to frontend to show approval dialog
                 if let Some(handle) = app_handle {
-                    let _ = handle.emit_all("connection-request", serde_json::json!({
+                    let _ = handle.emit("connection-request", serde_json::json!({
                         "remote_id": remote_id.clone()
                     }));
                     println!("[HOST] Emitted connection-request event for: {}", remote_id);
@@ -310,7 +313,7 @@ impl HostSession {
 
                     // Emit connected event
                     if let Some(handle) = app_handle {
-                        let _ = handle.emit_all("connection-accepted", serde_json::json!({
+                        let _ = handle.emit("connection-accepted", serde_json::json!({
                             "remote_id": remote_id
                         }));
                     }
@@ -326,7 +329,7 @@ impl HostSession {
 
                 // Emit disconnected event
                 if let Some(handle) = app_handle {
-                    let _ = handle.emit_all("connection-ended", serde_json::json!({}));
+                    let _ = handle.emit("connection-ended", serde_json::json!({}));
                 }
             }
             protocol::control::KEEPALIVE => {
@@ -362,7 +365,7 @@ impl HostSession {
 
                                         // Emit connection type change event
                                         if let Some(handle) = app_handle {
-                                            let _ = handle.emit_all("connection-type-changed", serde_json::json!({
+                                            let _ = handle.emit("connection-type-changed", serde_json::json!({
                                                 "type": "P2P"
                                             }));
                                         }
@@ -490,6 +493,62 @@ impl HostSession {
         payload.extend(&data);
 
         self.write_frame(Frame::video(payload)).await
+    }
+
+    async fn handle_clipboard_with_events<R: tauri::Runtime>(
+        &mut self,
+        frame: &Frame,
+        app_handle: Option<&tauri::AppHandle<R>>,
+    ) -> Result<()> {
+        use crate::clipboard::{ClipboardManager, ClipboardData};
+
+        if frame.payload.is_empty() {
+            return Ok(());
+        }
+
+        match frame.payload[0] {
+            protocol::clipboard::CLIPBOARD_REQUEST => {
+                println!("[HOST] Remote requested clipboard");
+                // Get local clipboard and send it
+                let clipboard = ClipboardManager::new();
+                if let Ok(Some(data)) = clipboard.get_clipboard() {
+                    let encoded = data.encode();
+                    self.write_frame(Frame::clipboard(protocol::clipboard::CLIPBOARD_DATA, &encoded)).await?;
+                    println!("[HOST] Sent clipboard data ({} bytes)", encoded.len());
+                }
+            }
+            protocol::clipboard::CLIPBOARD_DATA => {
+                println!("[HOST] Received clipboard data from remote");
+                // Decode and set local clipboard
+                if frame.payload.len() > 1 {
+                    if let Ok(data) = ClipboardData::decode(&frame.payload[1..]) {
+                        let clipboard = ClipboardManager::new();
+                        clipboard.update_hash(&data);
+                        if let Err(e) = clipboard.set_clipboard(&data) {
+                            eprintln!("[HOST] Failed to set clipboard: {}", e);
+                        } else {
+                            println!("[HOST] Clipboard updated from remote");
+                            // Notify frontend
+                            if let Some(handle) = app_handle {
+                                let _ = handle.emit("clipboard-received", serde_json::json!({
+                                    "type": match &data {
+                                        ClipboardData::Text(_) => "text",
+                                        ClipboardData::Image { .. } => "image",
+                                        ClipboardData::Files(_) => "files",
+                                    }
+                                }));
+                            }
+                        }
+                    }
+                }
+            }
+            protocol::clipboard::CLIPBOARD_CHANGED => {
+                println!("[HOST] Remote clipboard changed notification");
+                // Optionally auto-fetch the clipboard
+            }
+            _ => {}
+        }
+        Ok(())
     }
 
     /// Stop hosting

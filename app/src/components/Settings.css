@@ -538,6 +538,7 @@
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
@@ -674,14 +675,18 @@
   margin-bottom: 24px;
 }
 
-.about-links a {
+.about-links button {
+  background: transparent;
+  border: none;
   color: #00d4aa;
   text-decoration: none;
   font-size: 13px;
+  cursor: pointer;
+  padding: 0;
   transition: opacity 0.2s;
 }
 
-.about-links a:hover {
+.about-links button:hover {
   opacity: 0.8;
 }
 

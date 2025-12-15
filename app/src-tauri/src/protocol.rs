@@ -65,6 +65,18 @@ impl Frame {
         Self::new(Channel::Privacy, vec![cmd])
     }
 
+    pub fn clipboard(msg_type: u8, data: &[u8]) -> Self {
+        let mut payload = vec![msg_type];
+        payload.extend_from_slice(data);
+        Self::new(Channel::Clipboard, payload)
+    }
+
+    pub fn file(msg_type: u8, data: &[u8]) -> Self {
+        let mut payload = vec![msg_type];
+        payload.extend_from_slice(data);
+        Self::new(Channel::File, payload)
+    }
+
     /// Serialize to bytes
     pub fn to_bytes(&self) -> Vec<u8> {
         let len = self.payload.len();
@@ -137,4 +149,39 @@ pub mod privacy {
     pub const INPUT_BLOCK_ON: u8 = 0x03;
     pub const INPUT_BLOCK_OFF: u8 = 0x04;
     pub const STATUS_ACK: u8 = 0x05;
+}
+
+/// Clipboard message types
+pub mod clipboard {
+    /// Request remote clipboard content
+    pub const CLIPBOARD_REQUEST: u8 = 0x01;
+    /// Provide clipboard content (response to request or push)
+    pub const CLIPBOARD_DATA: u8 = 0x02;
+    /// Notify that clipboard has changed
+    pub const CLIPBOARD_CHANGED: u8 = 0x03;
+    /// Clipboard sync enabled/disabled notification
+    pub const CLIPBOARD_SYNC_STATUS: u8 = 0x04;
+
+    /// Clipboard data types
+    pub const DATA_TYPE_TEXT: u8 = 0x01;
+    pub const DATA_TYPE_IMAGE: u8 = 0x02;
+    pub const DATA_TYPE_FILES: u8 = 0x03;
+}
+
+/// File transfer message types
+pub mod file {
+    /// Request to start file transfer
+    pub const FILE_OFFER: u8 = 0x01;
+    /// Accept file transfer
+    pub const FILE_ACCEPT: u8 = 0x02;
+    /// Reject file transfer
+    pub const FILE_REJECT: u8 = 0x03;
+    /// File data chunk
+    pub const FILE_CHUNK: u8 = 0x04;
+    /// File transfer complete
+    pub const FILE_COMPLETE: u8 = 0x05;
+    /// Cancel file transfer
+    pub const FILE_CANCEL: u8 = 0x06;
+    /// File transfer progress
+    pub const FILE_PROGRESS: u8 = 0x07;
 }

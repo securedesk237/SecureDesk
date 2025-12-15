@@ -1,5 +1,5 @@
 import React from 'react';
-import { appWindow } from '@tauri-apps/api/window';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { FiMinus, FiSquare, FiX, FiShield, FiLock } from 'react-icons/fi';
 import { SessionInfo } from '../App';
 import './TitleBar.css';
@@ -31,21 +31,21 @@ const TitleBar: React.FC<TitleBarProps> = ({ session }) => {
       <div className="titlebar-right">
         <button
           className="titlebar-btn"
-          onClick={() => appWindow.minimize()}
+          onClick={() => getCurrentWindow().minimize()}
           title="Minimize"
         >
           <FiMinus />
         </button>
         <button
           className="titlebar-btn"
-          onClick={() => appWindow.toggleMaximize()}
+          onClick={() => getCurrentWindow().toggleMaximize()}
           title="Maximize"
         >
           <FiSquare />
         </button>
         <button
           className="titlebar-btn close"
-          onClick={() => appWindow.hide()}
+          onClick={() => getCurrentWindow().hide()}
           title="Close to Tray"
         >
           <FiX />

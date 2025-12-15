@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { invoke } from '@tauri-apps/api/tauri';
-import { motion } from 'framer-motion';
+import { invoke } from '@tauri-apps/api/core';
+import { listen } from '@tauri-apps/api/event';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   FiMaximize,
   FiMinimize,
@@ -17,6 +18,12 @@ import {
   FiZoomIn,
   FiZoomOut,
   FiRefreshCw,
+  FiCheck,
+  FiCopy,
+  FiDownload,
+  FiUpload,
+  FiCircle,
+  FiSquare,
 } from 'react-icons/fi';
 import { SessionInfo } from '../App';
 import './SessionView.css';
@@ -64,6 +71,13 @@ const keyCodeToVK: { [key: string]: number } = {
   'BracketRight': 0xDD, 'Quote': 0xDE,
 };
 
+interface ClipboardContent {
+  data_type: string;
+  text?: string;
+  image_data?: string;
+  files?: string[];
+}
+
 const SessionView: React.FC<SessionViewProps> = ({
   session,
   blackScreen,
@@ -81,6 +95,12 @@ const SessionView: React.FC<SessionViewProps> = ({
   const [frameSize, setFrameSize] = useState({ width: 1920, height: 1080 });
   const [fps, setFps] = useState(0);
   const [latency, setLatency] = useState(0);
+  const [showClipboardPanel, setShowClipboardPanel] = useState(false);
+  const [clipboardSyncEnabled, setClipboardSyncEnabled] = useState(true);
+  const [clipboardStatus, setClipboardStatus] = useState<string | null>(null);
+  const [localClipboard, setLocalClipboard] = useState<ClipboardContent | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingDuration, setRecordingDuration] = useState('00:00');
   const viewportRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -269,6 +289,107 @@ const SessionView: React.FC<SessionViewProps> = ({
     }
   };
 
+  // Clipboard functions
+  const refreshLocalClipboard = useCallback(async () => {
+    try {
+      const content = await invoke<ClipboardContent | null>('get_local_clipboard');
+      setLocalClipboard(content);
+    } catch (error) {
+      console.error('Failed to get clipboard:', error);
+    }
+  }, []);
+
+  const sendClipboardToRemote = useCallback(async () => {
+    try {
+      setClipboardStatus('Sending...');
+      await invoke('send_clipboard_to_remote');
+      setClipboardStatus('Sent!');
+      setTimeout(() => setClipboardStatus(null), 2000);
+    } catch (error) {
+      console.error('Failed to send clipboard:', error);
+      setClipboardStatus('Failed');
+      setTimeout(() => setClipboardStatus(null), 2000);
+    }
+  }, []);
+
+  const requestRemoteClipboard = useCallback(async () => {
+    try {
+      setClipboardStatus('Requesting...');
+      await invoke('request_remote_clipboard');
+      setClipboardStatus('Received!');
+      setTimeout(() => setClipboardStatus(null), 2000);
+    } catch (error) {
+      console.error('Failed to request clipboard:', error);
+      setClipboardStatus('Failed');
+      setTimeout(() => setClipboardStatus(null), 2000);
+    }
+  }, []);
+
+  const toggleClipboardSync = useCallback(async () => {
+    const newState = !clipboardSyncEnabled;
+    setClipboardSyncEnabled(newState);
+    try {
+      await invoke('set_clipboard_sync_enabled', { enabled: newState });
+    } catch (error) {
+      console.error('Failed to toggle clipboard sync:', error);
+    }
+  }, [clipboardSyncEnabled]);
+
+  // Listen for clipboard events
+  useEffect(() => {
+    const unlistenClipboard = listen('clipboard-received', () => {
+      setClipboardStatus('Clipboard updated!');
+      setTimeout(() => setClipboardStatus(null), 2000);
+      refreshLocalClipboard();
+    });
+
+    // Initial clipboard sync state
+    invoke<boolean>('get_clipboard_sync_enabled').then(setClipboardSyncEnabled).catch(console.error);
+
+    return () => {
+      unlistenClipboard.then(fn => fn());
+    };
+  }, [refreshLocalClipboard]);
+
+  // Recording functions
+  const toggleRecording = useCallback(async () => {
+    try {
+      if (isRecording) {
+        await invoke('stop_recording');
+        setIsRecording(false);
+        setRecordingDuration('00:00');
+      } else {
+        await invoke('start_recording', {
+          remoteDeviceId: session.remoteId,
+          remoteDeviceName: session.remoteName,
+        });
+        setIsRecording(true);
+      }
+    } catch (error) {
+      console.error('Recording error:', error);
+    }
+  }, [isRecording, session.remoteId, session.remoteName]);
+
+  // Update recording duration
+  useEffect(() => {
+    if (!isRecording) return;
+
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
+      const secs = (elapsed % 60).toString().padStart(2, '0');
+      setRecordingDuration(`${mins}:${secs}`);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isRecording]);
+
+  // Check initial recording state
+  useEffect(() => {
+    invoke<boolean>('is_recording').then(setIsRecording).catch(console.error);
+  }, []);
+
   return (
     <div className="session-view" ref={viewportRef}>
       {/* Toolbar */}
@@ -325,7 +446,21 @@ const SessionView: React.FC<SessionViewProps> = ({
 
           {/* Tools */}
           <div className="toolbar-group">
-            <button className="toolbar-btn icon-only" title="Clipboard">
+            <button
+              className={`toolbar-btn icon-only ${isRecording ? 'recording' : ''}`}
+              title={isRecording ? `Recording ${recordingDuration}` : 'Start Recording'}
+              onClick={toggleRecording}
+            >
+              {isRecording ? <FiSquare /> : <FiCircle />}
+            </button>
+            <button
+              className={`toolbar-btn icon-only ${showClipboardPanel ? 'active' : ''}`}
+              title="Clipboard"
+              onClick={() => {
+                setShowClipboardPanel(!showClipboardPanel);
+                if (!showClipboardPanel) refreshLocalClipboard();
+              }}
+            >
               <FiClipboard />
             </button>
             <button className="toolbar-btn icon-only" title="File Transfer">
@@ -420,6 +555,99 @@ const SessionView: React.FC<SessionViewProps> = ({
             </div>
           )}
         </div>
+
+        {/* Clipboard Panel */}
+        <AnimatePresence>
+          {showClipboardPanel && (
+            <motion.div
+              className="clipboard-panel"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+            >
+              <div className="clipboard-panel-header">
+                <h3>Clipboard Sync</h3>
+                <button
+                  className="clipboard-close"
+                  onClick={() => setShowClipboardPanel(false)}
+                >
+                  <FiX />
+                </button>
+              </div>
+
+              <div className="clipboard-panel-content">
+                <div className="clipboard-sync-toggle">
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={clipboardSyncEnabled}
+                      onChange={toggleClipboardSync}
+                    />
+                    <span>Auto-sync clipboard</span>
+                  </label>
+                </div>
+
+                <div className="clipboard-actions">
+                  <button
+                    className="clipboard-action-btn"
+                    onClick={sendClipboardToRemote}
+                    title="Send your clipboard to remote"
+                  >
+                    <FiUpload />
+                    <span>Send to Remote</span>
+                  </button>
+                  <button
+                    className="clipboard-action-btn"
+                    onClick={requestRemoteClipboard}
+                    title="Get clipboard from remote"
+                  >
+                    <FiDownload />
+                    <span>Get from Remote</span>
+                  </button>
+                </div>
+
+                {clipboardStatus && (
+                  <div className="clipboard-status">
+                    <FiCheck />
+                    <span>{clipboardStatus}</span>
+                  </div>
+                )}
+
+                <div className="clipboard-preview">
+                  <h4>Local Clipboard</h4>
+                  {localClipboard ? (
+                    <div className="clipboard-content">
+                      {localClipboard.data_type === 'text' && (
+                        <pre className="clipboard-text">
+                          {localClipboard.text?.substring(0, 500)}
+                          {(localClipboard.text?.length || 0) > 500 && '...'}
+                        </pre>
+                      )}
+                      {localClipboard.data_type === 'image' && (
+                        <div className="clipboard-image">
+                          <FiCopy /> Image in clipboard
+                        </div>
+                      )}
+                      {localClipboard.data_type === 'files' && (
+                        <div className="clipboard-files">
+                          <FiFolder /> {localClipboard.files?.length} file(s)
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="clipboard-empty">Clipboard is empty</div>
+                  )}
+                  <button
+                    className="clipboard-refresh"
+                    onClick={refreshLocalClipboard}
+                  >
+                    <FiRefreshCw /> Refresh
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Privacy Indicator - shows when black screen is active on remote */}
         {blackScreen && (

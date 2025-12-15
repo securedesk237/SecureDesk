@@ -345,6 +345,16 @@ impl ClientSession {
         Ok(Some((width, height, data)))
     }
 
+    /// Send clipboard data to remote
+    pub async fn send_clipboard(&mut self, data: &[u8]) -> Result<()> {
+        self.write_frame(Frame::clipboard(protocol::clipboard::CLIPBOARD_DATA, data)).await
+    }
+
+    /// Request clipboard from remote
+    pub async fn request_clipboard(&mut self) -> Result<()> {
+        self.write_frame(Frame::clipboard(protocol::clipboard::CLIPBOARD_REQUEST, &[])).await
+    }
+
     /// Disconnect session
     pub async fn disconnect(mut self) -> Result<()> {
         self.write_frame(Frame::control(protocol::control::SESSION_END, &[])).await?;

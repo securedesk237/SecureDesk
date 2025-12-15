@@ -6,10 +6,11 @@ authors = ["SecureDesk"]
 edition = "2021"
 
 [build-dependencies]
-tauri-build = { version = "1.5", features = [] }
+tauri-build = { version = "2.0", features = [] }
 
 [dependencies]
-tauri = { version = "1.5", features = ["shell-open", "window-all", "system-tray"] }
+tauri = { version = "2.0", features = ["tray-icon"] }
+tauri-plugin-shell = "2.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
@@ -31,7 +32,24 @@ blake3 = "1.5"
 rand = "0.8"
 getrandom = "0.2"
 
-# Windows APIs (for screen capture and input)
+# Image encoding
+image = { version = "0.24", default-features = false, features = ["jpeg", "png"] }
+
+# Misc
+anyhow = "1.0"
+thiserror = "1.0"
+parking_lot = "0.12"
+once_cell = "1.19"
+base64 = "0.21"
+async-trait = "0.1"
+socket2 = "0.5"
+dirs = "5.0"
+clap = { version = "4.4", features = ["derive"] }
+
+# HTTP client for SSO/OIDC
+reqwest = { version = "0.11", default-features = false, features = ["rustls-tls", "json"] }
+
+# Windows APIs (for screen capture, input, and clipboard)
 [target.'cfg(windows)'.dependencies]
 windows = { version = "0.52", features = [
     "Win32_Foundation",
@@ -44,6 +62,9 @@ windows = { version = "0.52", features = [
     "Win32_UI_Input_KeyboardAndMouse",
     "Win32_System_Threading",
     "Win32_System_LibraryLoader",
+    "Win32_System_DataExchange",
+    "Win32_System_Memory",
+    "Win32_UI_Shell",
 ] }
 
 # macOS APIs (for screen capture and input)
@@ -56,21 +77,9 @@ dispatch = "0.2"
 
 # Linux APIs (for screen capture and input)
 [target.'cfg(target_os = "linux")'.dependencies]
-x11 = { version = "2.21", features = ["xlib", "xtest", "xrandr", "xshm"] }
+x11 = { version = "2.21", features = ["xlib", "xtest", "xrandr"] }
 x11rb = { version = "0.13", features = ["shm", "randr", "xfixes"] }
 libc = "0.2"
-
-# Image encoding
-image = { version = "0.24", default-features = false, features = ["jpeg", "png"] }
-
-# Misc
-anyhow = "1.0"
-thiserror = "1.0"
-parking_lot = "0.12"
-once_cell = "1.19"
-base64 = "0.21"
-async-trait = "0.1"
-socket2 = "0.5"
 
 [features]
 default = ["custom-protocol"]
@@ -82,3 +91,4 @@ codegen-units = 1
 lto = true
 opt-level = "s"
 strip = true
+

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
+import { open } from '@tauri-apps/plugin-shell';
 import './Settings.css';
 
 interface SettingsProps {
@@ -497,9 +498,12 @@ function Settings({ p2pEnabled, onP2PToggle, isOpen, onClose }: SettingsProps) {
 
             <div className="license-purchase">
               <p>Don't have a license? Visit our website to purchase.</p>
-              <a href="https://securedesk.one/#pricing" target="_blank" rel="noopener noreferrer" className="purchase-link">
+              <button
+                className="purchase-link"
+                onClick={() => open('https://securedesk.one/#pricing')}
+              >
                 View Pricing Plans
-              </a>
+              </button>
             </div>
           </div>
         );
@@ -564,15 +568,15 @@ function Settings({ p2pEnabled, onP2PToggle, isOpen, onClose }: SettingsProps) {
               </p>
             </div>
             <div className="about-links">
-              <a href="https://securedesk.one" target="_blank" rel="noopener noreferrer">
+              <button onClick={() => open('https://securedesk.one')}>
                 Website
-              </a>
-              <a href="https://securedesk.one/privacy" target="_blank" rel="noopener noreferrer">
+              </button>
+              <button onClick={() => open('https://securedesk.one/privacy')}>
                 Privacy Policy
-              </a>
-              <a href="https://securedesk.one/terms" target="_blank" rel="noopener noreferrer">
+              </button>
+              <button onClick={() => open('https://securedesk.one/terms')}>
                 Terms of Service
-              </a>
+              </button>
             </div>
             <div className="about-credits">
               <p>Built with Tauri, React, and Rust</p>

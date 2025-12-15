@@ -86,6 +86,10 @@ pub struct ConnectionConfig {
     /// Application settings
     #[serde(default)]
     pub settings: AppSettings,
+
+    /// Device alias (friendly name)
+    #[serde(default)]
+    pub alias: Option<String>,
 }
 
 impl Default for ConnectionConfig {
@@ -94,6 +98,7 @@ impl Default for ConnectionConfig {
             p2p_enabled: true, // P2P enabled by default for faster connections
             trusted_devices: HashMap::new(),
             settings: AppSettings::default(),
+            alias: None,
         }
     }
 }
@@ -145,6 +150,17 @@ impl ConnectionConfig {
     /// Set P2P enabled and save
     pub fn set_p2p_enabled(&mut self, enabled: bool) -> Result<()> {
         self.p2p_enabled = enabled;
+        self.save()
+    }
+
+    /// Get the device alias
+    pub fn get_alias(&self) -> Option<&String> {
+        self.alias.as_ref()
+    }
+
+    /// Set the device alias and save
+    pub fn set_alias(&mut self, alias: &str) -> Result<()> {
+        self.alias = if alias.is_empty() { None } else { Some(alias.to_string()) };
         self.save()
     }
 

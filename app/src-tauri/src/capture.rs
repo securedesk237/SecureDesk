@@ -380,6 +380,13 @@ mod linux_capture {
     use std::sync::atomic::Ordering;
     use x11::xlib::*;
 
+    /// AllPlanes constant - returns all bits set (equivalent to !0)
+    /// This is the value that XAllPlanes() returns
+    #[inline]
+    fn all_planes() -> u64 {
+        !0u64
+    }
+
     pub struct ScreenCapture {
         display: *mut Display,
         root: Window,
@@ -423,6 +430,7 @@ mod linux_capture {
 
         unsafe fn capture_x11(&mut self) -> Result<(u32, u32, Vec<u8>)> {
             // Use XGetImage (slower but always works)
+            // all_planes() returns !0 which is equivalent to XAllPlanes()
             let image = XGetImage(
                 self.display,
                 self.root,
@@ -430,7 +438,7 @@ mod linux_capture {
                 0,
                 self.width,
                 self.height,
-                XAllPlanes(),
+                all_planes(),
                 ZPixmap,
             );
 
